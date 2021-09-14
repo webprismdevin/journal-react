@@ -7,6 +7,7 @@ import Logout from './Components/Logout';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
+import './bulma.min.css';
 import 'draft-js/dist/Draft.css';
 
 
@@ -24,7 +25,6 @@ class App extends Component {
   }
 
   componentDidMount(){
-    console.log(this.user);
     if(this.user.is !== undefined) this.setAuth(true);
   }
 
@@ -34,23 +34,27 @@ class App extends Component {
 
   render() {
     return (
-      <div>
+      <section className="section">
+        <div className="container is-fluid is-flex is-justify-content-space-between	">
+          <h1 className="title">Journal</h1>
+          {this.state.authenticated && <Logout user={this.user} setAuth={this.setAuth} className="is-pulled-right"/>}
+        </div>
+        <br />
+        <div className="container">
         {
         this.state.authenticated ? 
-          <>
-            <Logout user={this.user} setAuth={this.setAuth}/>
             <Home gun={this.gun} 
             user={this.user} 
             setAuth={this.setAuth}/> 
-          </>
           : 
-          <Login 
-            setAuth={this.setAuth} 
-            user={this.user}
+            <Login 
+              setAuth={this.setAuth} 
+              user={this.user}
             />
         }
         <ToastContainer />
-      </div>
+        </div>
+      </section>
     );
   }
 }

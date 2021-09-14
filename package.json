@@ -7,6 +7,7 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "bootstrap": "^5.1.0",
+    "dayjs": "^1.10.7",
     "draft-js": "^0.11.7",
     "gun": "^0.2020.1234",
     "react": "^17.0.2",

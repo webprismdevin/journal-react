@@ -1,13 +1,14 @@
 import React from 'react';
 // eslint-disable-next-line no-unused-vars
 import ReactDOM from 'react-dom';
-import {Editor, EditorState, ContentState, RichUtils, getDefaultKeyBinding, convertToRaw, convertFromRaw} from 'draft-js';
+import {Editor, EditorState, RichUtils, getDefaultKeyBinding, convertToRaw, convertFromRaw} from 'draft-js';
 
 class RichEditor extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        editorState: EditorState.createEmpty() 
+        editorState: EditorState.createEmpty(),
+        readOnly: false
       };
       this.focus = () => this.refs.editor.focus();
       this.onChange = (editorState) => this.setState({editorState}, () => {
@@ -71,16 +72,31 @@ class RichEditor extends React.Component {
     componentDidUpdate(prevProps) {
       // Typical usage (don't forget to compare props):
       if (this.props.selectedEntry !== prevProps.selectedEntry) {
-        console.log(this.props.selectedEntry);
-        this.user.get('journal').get(this.props.selectedEntry).once((res) => {
-          let data = JSON.parse(res)
 
-          this.setState({
-            editorState: EditorState
-              .createWithContent(convertFromRaw(data))
+        if(this.props.selectedEntry !== null){
+          this.user.get('journal').get(this.props.selectedEntry).once((res) => {
+
+            console.log(res, "from update");
+  
+            this.setState({
+              editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(res.entry))),
+              readOnly: true
+            })
           })
+        }
+
+      }
+
+      if(this.props.reset !== prevProps.reset){
+        this.setState({
+          editorState: EditorState.createEmpty(),
+          readOnly: false
         })
       }
+    }
+
+    componentWillUnmount(){
+      
     }
 
     render() {
@@ -88,7 +104,7 @@ class RichEditor extends React.Component {
 
       // If the user changes block type before entering any text, we can
       // either style the placeholder or hide it. Let's just hide it now.
-      let className = 'RichEditor-editor';
+      let className = 'RichEditor-editor content';
       var contentState = editorState.getCurrentContent();
       if (!contentState.hasText()) {
         if (contentState.getBlockMap().first().getType() !== 'unstyled') {
@@ -98,14 +114,16 @@ class RichEditor extends React.Component {
 
       return (
         <div className="RichEditor-root">
-          <BlockStyleControls
-            editorState={editorState}
-            onToggle={this.toggleBlockType}
-          />
-          <InlineStyleControls
-            editorState={editorState}
-            onToggle={this.toggleInlineStyle}
-          />
+          <div style={{display: this.state.readOnly ? "none": "inherit"}}>
+            <BlockStyleControls
+              editorState={editorState}
+              onToggle={this.toggleBlockType}
+            />
+            <InlineStyleControls
+              editorState={editorState}
+              onToggle={this.toggleInlineStyle}
+            />
+          </div>
           <div className={className} onClick={this.focus}>
             <Editor
               blockStyleFn={getBlockStyle}
@@ -117,6 +135,7 @@ class RichEditor extends React.Component {
               placeholder="Tell a story..."
               ref="editor"
               spellCheck={true}
+              readOnly={this.state.readOnly}
             />
           </div>
         </div>

@@ -7,10 +7,9 @@
 }
 
 .RichEditor-editor {
-  border-top: 1px solid #ddd;
   cursor: text;
   font-size: 16px;
-  margin-top: 10px;
+  min-height: 200px;
 }
 
 .RichEditor-editor .public-DraftEditorPlaceholder-root,
@@ -48,6 +47,11 @@
   font-size: 14px;
   margin-bottom: 5px;
   user-select: none;
+}
+
+.RichEditor-controls:last-of-type {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
 }
 
 .RichEditor-styleButton {

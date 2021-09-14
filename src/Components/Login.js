@@ -28,12 +28,24 @@ const Login = (props) => {
     }
 
     return(
-        <form onSubmit={e => handleAuth(e)}>
-            <input type="text" value={user} onChange={e => setUser(e.target.value)} placeholder="Enter your username" />
-            <input type="text" value={pass} onChange={e => setPass(e.target.value)} placeholder="Enter your password" /> 
-            <input type="submit" value="Submit" />
-            <input type="button" value="Sign Up" onClick={handleSignUp}/>
-        </form>
+        <div className="container is-fluid">
+            <form onSubmit={e => handleAuth(e)} className="columns">
+                <div className="column">
+                    <div className="columns">
+                        <div className="column">
+                            <input className="input" type="text" value={user} onChange={e => setUser(e.target.value)} placeholder="Enter your username"/>
+                        </div>
+                        <div className="column">
+                            <input className="input" type="text" value={pass} onChange={e => setPass(e.target.value)} placeholder="Enter your password"/>
+                        </div>
+                    </div>
+                </div>
+                <div className="column">
+                    <input type="submit" value="Submit" className="button is-primary" style={{marginRight: 32}}/>
+                    <input type="button" value="Sign Up" onClick={handleSignUp} className="button is-info"/>
+                </div>
+            </form>
+        </div>
     )
 }
 
