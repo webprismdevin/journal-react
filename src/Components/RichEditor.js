@@ -80,7 +80,7 @@ class RichEditor extends React.Component {
   
             this.setState({
               editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(res.entry))),
-              readOnly: true
+              readOnly: this.props.readOnly
             })
           })
         }

@@ -29,6 +29,7 @@ class Home extends Component {
             }))
 
         });
+
     }
 
     componentWillUnmount(){
@@ -39,10 +40,33 @@ class Home extends Component {
         this.setState({editorContent: data});
     }
 
+    saveOrUpdate = () => {
+        if(this.state.selectedEntry) {
+            this.updateEntry(this.state.selectedEntry);
+        } else {
+            this.saveToJournal();
+        }
+
+        this.setState({
+            selectedEntry: null,
+            reset: this.state.reset + 1
+        })
+    }
+    
+    updateEntry = (id) => {
+        this.user.get('journal').get(id).put({
+            entry: JSON.stringify(this.state.editorContent),
+        }, () => {
+            toast.success('Journal entry updated!', {
+                pauseOnHover: false
+            })
+        });
+    }
+
     saveToJournal = () => {
         this.user.get('journal').set({
             dateTime: dayjs().toISOString(),
-            entry: JSON.stringify(this.state.editorContent)
+            entry: JSON.stringify(this.state.editorContent),
         }, () => {
             toast.success('Journal entry saved!', {
                 pauseOnHover: false
@@ -50,8 +74,11 @@ class Home extends Component {
         });
     }
 
-    loadEditor = (i) => {
-        this.setState({selectedEntry: i})
+    loadEditor = (i, r) => {
+        this.setState({
+            selectedEntry: i,
+            readOnly: r
+        })
     }
 
     deleteEntry = (i) => {
@@ -71,20 +98,33 @@ class Home extends Component {
 
     render(){
         return(
-            <section>
+            <>
+            <section className="section">
                 <div className="container is-fluid">
-                    <RichEditor reset={this.state.reset} editorContentLift={this.editorContentLift} selectedEntry={this.state.selectedEntry} user={this.user}/>
+                    <RichEditor reset={this.state.reset} editorContentLift={this.editorContentLift} selectedEntry={this.state.selectedEntry} readOnly={this.state.readOnly} user={this.user}/>
                     <br/>
                     <div className="is-flex is-justify-content-space-between">
-                        <input type="button" className="button" value="Save to Journal" onClick={this.saveToJournal} disabled={this.state.selectedEntry !== null}/>
-                        <input type="button" className="button" value="Clear" onClick={this.resetEditor}/>
+                        <input type="button" className="button is-primary is-light" 
+                            value={this.state.selectedEntry ? "Update" : "Save"}
+                            onClick={this.saveOrUpdate} 
+                            disabled={this.state.readOnly === true}
+                        />
+                        <input type="button" className="button is-info is-light" value="New" 
+                            onClick={this.resetEditor}
+                        />
                     </div>
                 </div>
-                <br />
-                <hr />
+            </section>
+            <section className="section">
                 <div className="container is-fluid">
                     <ul>
-                        {Object.entries(this.state.journalEntries).map(([id, entry]) => 
+                        {
+                        Object.entries(this.state.journalEntries)
+                        .sort(([a,b], [c,d]) => {
+                            if(dayjs(b.dateTime).isBefore(d.dateTime)) return 1;
+                            else return -1;
+                        })
+                        .map(([id, entry]) => 
                             <li key={entry._id} className="box">
                                 <div className="is-flex is-justify-content-space-between">
                                     <div className="content">{dayjs(entry.dateTime).format("MMM DD, YYYY | hh:mm a")}</div>
@@ -92,13 +132,15 @@ class Home extends Component {
                                 </div>
                                 <div className="content">{entry.entry.blocks[0].text}</div>
                                 <div className="is-flex is-justify-content-space-between">
-                                    <button onClick={() => this.loadEditor(entry._id)} className="button">Read</button> 
+                                    <button onClick={() => this.loadEditor(entry._id, true)} className="button">Read</button>
+                                    <button onClick={() => this.loadEditor(entry._id, false)} className="button">Edit</button>
                                 </div>
                             </li>
                         )}
                     </ul>
                 </div>
             </section>
+            </>
         )
     }
 }
