@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import RichEditor from './RichEditor';
 import dayjs from 'dayjs';
+import { produce } from 'immer';
+import { toast } from 'react-toastify';
 
 class Home extends Component {
     constructor(props){
@@ -8,28 +10,25 @@ class Home extends Component {
 
         this.state = {
             editorContent: null,
-            journalEntries: [],
+            journalEntries: {},
             selectedEntry: null,
             reset: 0
         };
 
         this.user = this.props.user;
+
     }
 
     componentDidMount(){
-        this.fetchData();
-    }
 
-    fetchData = () => {
-        this.setState({journalEntries: []}, () => {
-            this.user.get('journal').map().on((data, id) => {
-                if(data) { 
-                    let alreadyAdded = this.state.journalEntries.filter(e => e._id === id);
-                    alreadyAdded.length === 0 && this.setState({journalEntries: [...this.state.journalEntries, {_id: id, dateTime: data.dateTime, entry: JSON.parse(data.entry)}]})
-                }
-                return;
-            });
-        }); 
+        this.user.get('journal').map().on((data, id) => {
+
+            this.setState(prevState => produce(prevState, draft => { 
+                if (data) draft.journalEntries[id] = {_id: id, dateTime: data.dateTime, entry: JSON.parse(data.entry)}; 
+                if (!data) delete draft.journalEntries[id]
+            }))
+
+        });
     }
 
     componentWillUnmount(){
@@ -44,6 +43,10 @@ class Home extends Component {
         this.user.get('journal').set({
             dateTime: dayjs().toISOString(),
             entry: JSON.stringify(this.state.editorContent)
+        }, () => {
+            toast.success('Journal entry saved!', {
+                pauseOnHover: false
+            })
         });
     }
 
@@ -52,9 +55,11 @@ class Home extends Component {
     }
 
     deleteEntry = (i) => {
-        this.user.get('journal').get(i).put(null, () => {
-            this.fetchData();
-        });
+        toast.error("Click to confirm and delete the entry. To cancel, hit the x", {
+            onClick: () => this.user.get('journal').get(i).put(null),
+            autoClose: 6000,
+            position: 'bottom-right'
+        })
     }
 
     resetEditor = () => {
@@ -79,14 +84,15 @@ class Home extends Component {
                 <hr />
                 <div className="container is-fluid">
                     <ul>
-                        {this.state.journalEntries.map((e, index) => 
-                            <li key={e._id} className="box">
+                        {Object.entries(this.state.journalEntries).map(([id, entry]) => 
+                            <li key={entry._id} className="box">
                                 <div className="is-flex is-justify-content-space-between">
-                                    <div className="content">{e.entry.blocks[0].text}</div>
-                                    <button onClick={() => this.deleteEntry(e._id)} className="delete"></button>
+                                    <div className="content">{dayjs(entry.dateTime).format("MMM DD, YYYY | hh:mm a")}</div>
+                                    <button onClick={() => this.deleteEntry(entry._id)} className="delete"></button>
                                 </div>
+                                <div className="content">{entry.entry.blocks[0].text}</div>
                                 <div className="is-flex is-justify-content-space-between">
-                                    <button onClick={() => this.loadEditor(e._id)} className="button">Open</button> 
+                                    <button onClick={() => this.loadEditor(entry._id)} className="button">Read</button> 
                                 </div>
                             </li>
                         )}

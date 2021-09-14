@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
+import Welcome from './Welcome';
 
 
 const Login = (props) => {
@@ -8,10 +9,14 @@ const Login = (props) => {
 
     const handleAuth = (e) => {
         if(e !== undefined) e.preventDefault();
-        console.log("submitted");
 
         props.user.auth(user, pass, (res) => {
-            if(res.err === "Wrong user or password.") handleBadAuth(res);
+            // console.log(res)
+            if(res.err === "Wrong user or password.") {
+                handleBadAuth(res);
+
+                return;
+            }
             
             props.setAuth(true)
         })
@@ -45,6 +50,7 @@ const Login = (props) => {
                     <input type="button" value="Sign Up" onClick={handleSignUp} className="button is-info"/>
                 </div>
             </form>
+            <Welcome />
         </div>
     )
 }
