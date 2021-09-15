@@ -39,8 +39,8 @@ class NavBar extends React.Component {
                 <div id="navbarBasicExample" className={`navbar-menu ${this.state.burgerActive && 'is-active'}`}>   
                     <div class="navbar-start">
                         <a class="navbar-item" href="https://github.com/webprismdevin/web3-journal">
-                            <FontAwesomeIcon icon={faCode} />
-                            <span> Source Code</span>
+                            <FontAwesomeIcon icon={faCode} style={{marginRight: 6, display: this.state.burgerActive ? 'inline' : 'none'}}/>
+                            <span>Source Code</span>
                         </a>
                     </div>
                     <div className="navbar-end">
