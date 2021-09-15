@@ -100,7 +100,7 @@ class Home extends Component {
         return(
             <>
             <section className="section">
-                <div className="container is-fluid">
+                <div className="container">
                     <RichEditor reset={this.state.reset} editorContentLift={this.editorContentLift} selectedEntry={this.state.selectedEntry} readOnly={this.state.readOnly} user={this.user}/>
                     <br/>
                     <div className="is-flex is-justify-content-space-between">
@@ -116,7 +116,7 @@ class Home extends Component {
                 </div>
             </section>
             <section className="section">
-                <div className="container is-fluid">
+                <div className="container">
                     <ul>
                         {
                         Object.entries(this.state.journalEntries)

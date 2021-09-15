@@ -36,7 +36,7 @@ class App extends Component {
     return (
       <>
         <section className="section">
-          <div className="container is-fluid is-flex is-justify-content-space-between">
+          <div className="container is-flex is-justify-content-space-between">
             <h1 className="title">Journal</h1>
             {this.state.authenticated && <Logout user={this.user} setAuth={this.setAuth}/>}
           </div>
