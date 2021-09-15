@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import Gun from 'gun';
+import Gun from 'gun/gun';
 import 'gun/sea';
 import Home from './Components/Home';
 import Login from './Components/Login';
 import Logout from './Components/Logout';
+import NavBar from './Components/NavBar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
@@ -41,6 +42,7 @@ class App extends Component {
             {this.state.authenticated && <Logout user={this.user} setAuth={this.setAuth}/>}
           </div>
         </section>
+        {/* <NavBar user={this.user} setAuth={this.setAuth}/> */}
         {
         this.state.authenticated ? 
             <Home gun={this.gun} 
