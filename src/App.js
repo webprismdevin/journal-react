@@ -3,7 +3,6 @@ import Gun from 'gun/gun';
 import 'gun/sea';
 import Home from './Components/Home';
 import Login from './Components/Login';
-import Logout from './Components/Logout';
 import NavBar from './Components/NavBar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -36,13 +35,13 @@ class App extends Component {
   render() {
     return (
       <>
-        <section className="section">
+        {/* <section className="section">
           <div className="container is-flex is-justify-content-space-between">
             <h1 className="title">Journal</h1>
             {this.state.authenticated && <Logout user={this.user} setAuth={this.setAuth}/>}
           </div>
-        </section>
-        {/* <NavBar user={this.user} setAuth={this.setAuth}/> */}
+        </section> */}
+        <NavBar user={this.user} setAuth={this.setAuth}/>
         {
         this.state.authenticated ? 
             <Home gun={this.gun} 

@@ -33,25 +33,27 @@ const Login = (props) => {
     }
 
     return(
-        <div className="container is-fluid">
-            <form onSubmit={e => handleAuth(e)} className="columns">
-                <div className="column">
-                    <div className="columns">
-                        <div className="column">
-                            <input className="input" type="text" value={user} onChange={e => setUser(e.target.value)} placeholder="Enter your username"/>
-                        </div>
-                        <div className="column">
-                            <input className="input" type="password" value={pass} onChange={e => setPass(e.target.value)} placeholder="Enter your password"/>
+        <section className="section">
+            <div className="container">
+                <form onSubmit={e => handleAuth(e)} className="columns">
+                    <div className="column">
+                        <div className="columns">
+                            <div className="column">
+                                <input className="input" type="text" value={user} onChange={e => setUser(e.target.value)} placeholder="Enter your username"/>
+                            </div>
+                            <div className="column">
+                                <input className="input" type="password" value={pass} onChange={e => setPass(e.target.value)} placeholder="Enter your password"/>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div className="column">
-                    <input type="submit" value="Submit" className="button is-primary" style={{marginRight: 32}}/>
-                    <input type="button" value="Sign Up" onClick={handleSignUp} className="button is-info"/>
-                </div>
-            </form>
-            <Welcome />
-        </div>
+                    <div className="column">
+                        <input type="submit" value="Submit" className="button is-primary" style={{marginRight: 32}}/>
+                        <input type="button" value="Sign Up" onClick={handleSignUp} className="button is-info"/>
+                    </div>
+                </form>
+                <Welcome />
+            </div>
+        </section>
     )
 }
 
