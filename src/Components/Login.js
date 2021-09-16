@@ -27,8 +27,8 @@ const Login = (props) => {
     }
 
     const handleSignUp = () => {
-        props.user.create(user, pass, () => {
-            this.handleAuth();
+        props.user.create(user, pass, (res) => {
+            this.handleAuth(true);
         });
     }
 

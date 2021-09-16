@@ -35,19 +35,14 @@ class App extends Component {
   render() {
     return (
       <>
-        {/* <section className="section">
-          <div className="container is-flex is-justify-content-space-between">
-            <h1 className="title">Journal</h1>
-            {this.state.authenticated && <Logout user={this.user} setAuth={this.setAuth}/>}
-          </div>
-        </section> */}
         <NavBar user={this.user} setAuth={this.setAuth}/>
         {
-        this.state.authenticated ? 
+          this.state.authenticated ? 
             <Home gun={this.gun} 
-            user={this.user} 
-            setAuth={this.setAuth}/> 
-          : 
+              user={this.user} 
+              setAuth={this.setAuth}
+            /> 
+          :
             <Login 
               setAuth={this.setAuth} 
               user={this.user}

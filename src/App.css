@@ -4,7 +4,7 @@ body {
 
 .RichEditor-root {
   background: #fff;
-  border: 1px solid #ddd;
+  /* border: 1px solid #ddd; */
   font-family: 'Georgia', serif;
   font-size: 14px;
   padding: 15px;
@@ -14,7 +14,7 @@ body {
 .RichEditor-editor {
   cursor: text;
   font-size: 16px;
-  min-height: 300px;
+  /* min-height: 300px; */
 }
 
 .RichEditor-editor .public-DraftEditorPlaceholder-root,
@@ -69,4 +69,13 @@ body {
 
 .RichEditor-activeButton {
   color: #5890ff;
+}
+
+ul > li {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 24px;
+}
+
+li:last-child {
+  border: none;
 }

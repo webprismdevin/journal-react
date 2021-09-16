@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import RichEditor from './RichEditor';
 import dayjs from 'dayjs';
 import { produce } from 'immer';
@@ -12,7 +12,8 @@ class Home extends Component {
             editorContent: null,
             journalEntries: {},
             selectedEntry: null,
-            reset: 0
+            reset: 0,
+            showEntries: false
         };
 
         this.user = this.props.user;
@@ -96,53 +97,87 @@ class Home extends Component {
         })
     }
 
+    toggleEntries = () => {
+        this.setState({
+            showEntries: !this.state.showEntries
+        })
+    }
+
     render(){
         return(
             <>
             <section className="section">
                 <div className="container">
-                    <RichEditor reset={this.state.reset} editorContentLift={this.editorContentLift} selectedEntry={this.state.selectedEntry} readOnly={this.state.readOnly} user={this.user}/>
-                    <br/>
-                    <div className="is-flex is-justify-content-space-between">
+                    <div className="is-flex is-justify-content-space-between block">
+                        <input type="button" className="button is-info is-light" value="New" 
+                            onClick={this.resetEditor}
+                        />
                         <input type="button" className="button is-primary is-light" 
                             value={this.state.selectedEntry ? "Update" : "Save"}
                             onClick={this.saveOrUpdate} 
                             disabled={this.state.readOnly === true}
                         />
-                        <input type="button" className="button is-info is-light" value="New" 
-                            onClick={this.resetEditor}
-                        />
                     </div>
+                    <RichEditor reset={this.state.reset} editorContentLift={this.editorContentLift} selectedEntry={this.state.selectedEntry} readOnly={this.state.readOnly} user={this.user}/>
                 </div>
             </section>
             <section className="section">
                 <div className="container">
-                    <ul>
-                        {
-                        Object.entries(this.state.journalEntries)
-                        .sort(([a,b], [c,d]) => {
-                            if(dayjs(b.dateTime).isBefore(d.dateTime)) return 1;
-                            else return -1;
-                        })
-                        .map(([id, entry]) => 
-                            <li key={entry._id} className="box">
-                                <div className="is-flex is-justify-content-space-between">
-                                    <div className="content">{dayjs(entry.dateTime).format("MMM DD, YYYY | hh:mm a")}</div>
-                                    <button onClick={() => this.deleteEntry(entry._id)} className="delete"></button>
-                                </div>
-                                <div className="content">{entry.entry.blocks[0].text}</div>
-                                <div className="is-flex is-justify-content-space-between">
-                                    <button onClick={() => this.loadEditor(entry._id, true)} className="button">Read</button>
-                                    <button onClick={() => this.loadEditor(entry._id, false)} className="button">Edit</button>
-                                </div>
-                            </li>
-                        )}
-                    </ul>
+                    <div className="block">
+                    <input type="button" className="button is-info is-light" 
+                        value={`${this.state.showEntries  ? 'Hide': 'Show'} Entries`}
+                        onClick={this.toggleEntries}
+                    />
+                    </div>
+                    {this.state.showEntries && <JournalList 
+                        journalEntries={this.state.journalEntries}
+                        deleteEntry={this.deleteEntry}
+                        loadEditor={this.loadEditor}
+                    />}
                 </div>
             </section>
             </>
         )
     }
+}
+
+const JournalList = (props) => {
+    const [entries, setEntries] = useState({});
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setEntries(props.journalEntries)
+    }, [props.journalEntries]);
+
+    useEffect(() => {
+        if(Object.entries(entries.length > 0)) {
+            setLoading(false)
+        }
+    }, [entries])
+
+    return(
+        <ul>
+            {!loading &&
+            Object.entries(entries)
+            .sort(([a,b], [c,d]) => {
+                if(dayjs(b.dateTime).isBefore(d.dateTime)) return 1;
+                else return -1;
+            })
+            .map(([id, entry]) => 
+                <li key={entry._id} className="block">
+                    <div className="is-flex is-justify-content-space-between">
+                        <div className="content">{dayjs(entry.dateTime).format("MMM DD, YYYY | hh:mm a")}</div>
+                        <button onClick={() => props.deleteEntry(entry._id)} className="delete"></button>
+                    </div>
+                    <div className="content">{entry.entry.blocks[0].text}</div>
+                    <div className="is-flex is-justify-content-space-between">
+                        <button onClick={() => props.loadEditor(entry._id, true)} className="button">Read</button>
+                        <button onClick={() => props.loadEditor(entry._id, false)} className="button">Edit</button>
+                    </div>
+                </li>)
+            }
+        </ul>
+    )
 }
 
 export default Home;
